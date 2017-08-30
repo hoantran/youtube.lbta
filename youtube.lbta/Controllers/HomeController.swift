@@ -23,6 +23,22 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         navigationController?.navigationBar.isTranslucent = false
         collectionView?.register(VideoCell.self, forCellWithReuseIdentifier: VideoCell.ID)
         UINavigationBar.appearance().tintColor = UIColor.red
+        
+        collectionView?.contentInset = UIEdgeInsetsMake(50, 0, 0, 0)
+        collectionView?.scrollIndicatorInsets = UIEdgeInsetsMake(50, 0, 0, 0)
+        
+        setupMenuBar()
+    }
+    
+    let menuBar: MenuBar = {
+        let mb = MenuBar()
+        return mb
+    }()
+    
+    private func setupMenuBar() {
+        view.addSubview(menuBar)
+        view.addConstraints(format: "H:|[v0]|", views: menuBar)
+        view.addConstraints(format: "V:|[v0(50)]", views: menuBar)
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
