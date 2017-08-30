@@ -13,4 +13,4 @@ echo "Checking in Episode $episode ..."
 git add .
 git commit -m "Episode $episode"
 git push -u origin master
-gs
+git status
