@@ -22,6 +22,8 @@ class SettingLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDel
     let settings: [Setting]
     let cellHeight: CGFloat = 50
     
+    var homeController: HomeController?
+    
     @objc func showSettings() {
         if let window = UIApplication.shared.keyWindow {
             blackView.backgroundColor = UIColor(white: 0, alpha: 0.5)
@@ -43,12 +45,21 @@ class SettingLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDel
     }
     
     @objc func handleDismiss() {
-        UIView.animate(withDuration: 0.5, animations: {
+        dismissSetting(setting: nil)
+    }
+    
+    func dismissSetting(setting: Setting?) {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.blackView.alpha = 0
             if let window = UIApplication.shared.keyWindow {
                 self.collectionView.frame = CGRect(x:0, y:window.frame.height, width:self.collectionView.frame.width, height:self.collectionView.frame.height)
             }
-            
+        }, completion: { _ in
+            if let setting = setting {
+                if setting.label != "Cancel" {
+                    self.homeController?.showControllerForSetting(setting)
+                }
+            }
         })
     }
     
@@ -68,6 +79,10 @@ class SettingLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDel
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SettingCell.cellID, for: indexPath) as! SettingCell
         cell.setting = self.settings[indexPath.row]
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        dismissSetting(setting: self.settings[indexPath.item])
     }
     
     override init() {
