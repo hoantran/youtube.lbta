@@ -22,6 +22,8 @@ class MenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UIC
     let imageNames = ["home", "trending", "subscriptions", "account"]
     let cellID = "cellID"
     
+    var homeController: HomeController?
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 4
     }
@@ -80,12 +82,14 @@ class MenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let x = CGFloat(indexPath.item) * frame.width / 4
-        horizontalBarLeftAnchorConstraint?.constant = x
+//        let x = CGFloat(indexPath.item) * frame.width / 4
+//        horizontalBarLeftAnchorConstraint?.constant = x
+//        
+//        UIView.animate(withDuration: 0.55, delay: 0, usingSpringWithDamping: 10, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
+//            self.layoutIfNeeded()
+//        }, completion: nil)
         
-        UIView.animate(withDuration: 0.55, delay: 0, usingSpringWithDamping: 10, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
-            self.layoutIfNeeded()
-        }, completion: nil)
+        homeController?.scrollToMenuIndex(menuIndex: indexPath.item)
     }
 }
 
@@ -100,18 +104,12 @@ class MenuCell: BaseCell {
     
     override var isHighlighted: Bool {
         didSet {
-            if let index = self.index {
-                print("highligted:", self.isHighlighted, ":", index)
-            }
             imageView.tintColor =  isHighlighted ? UIColor.white : UIColor.rgb(red: 91, green: 14, blue: 13)
         }
     }
     
     override var isSelected: Bool {
         didSet {
-            if let index = self.index {
-                print("isSelected:", self.isSelected, ":", index)
-            }
             imageView.tintColor =  isSelected ? UIColor.white : UIColor.rgb(red: 91, green: 14, blue: 13)
         }
     }

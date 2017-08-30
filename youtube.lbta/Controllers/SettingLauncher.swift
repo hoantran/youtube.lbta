@@ -32,7 +32,7 @@ class SettingLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDel
     
     var homeController: HomeController?
     
-    @objc func showSettings() {
+    func showSettings() {
         if let window = UIApplication.shared.keyWindow {
             blackView.backgroundColor = UIColor(white: 0, alpha: 0.5)
             blackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleDismiss)))
