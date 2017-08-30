@@ -9,10 +9,10 @@
 import UIKit
 
 class Setting {
-    let label: String
+    let label: SettingName
     let image: String
     
-    init(label: String, image: String) {
+    init(label: SettingName, image: String) {
         self.label = label
         self.image = image
     }
@@ -32,7 +32,7 @@ class SettingCell: BaseCell {
     
     var setting: Setting? {
         didSet {
-            labelView.text = setting?.label
+            labelView.text = setting?.label.rawValue
             if let imageName = setting?.image {
                 iconImageView.image = UIImage(named: imageName)?.withRenderingMode(.alwaysTemplate)
                 iconImageView.tintColor = UIColor.darkGray

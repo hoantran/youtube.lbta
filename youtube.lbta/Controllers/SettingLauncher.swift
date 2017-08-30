@@ -8,6 +8,14 @@
 
 import UIKit
 
+enum SettingName: String {
+    case settings = "Settings"
+    case feedback = "Send Feebacks"
+    case help = "Help"
+    case switch_accout = "Switch Account"
+    case cancel = "Cancel"
+}
+
 class SettingLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDelegate,UICollectionViewDelegateFlowLayout {
     
     let blackView = UIView()
@@ -56,7 +64,7 @@ class SettingLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDel
             }
         }, completion: { _ in
             if let setting = setting {
-                if setting.label != "Cancel" {
+                if setting.label != .cancel {
                     self.homeController?.showControllerForSetting(setting)
                 }
             }
@@ -86,11 +94,11 @@ class SettingLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDel
     }
     
     override init() {
-        self.settings = [   Setting(label: "Settings", image: "settings"  ),
-                            Setting(label: "Send Feebacks", image: "feedback"  ),
-                            Setting(label: "Help", image: "help"  ),
-                            Setting(label: "Switch Account", image: "switch_account"  ),
-                            Setting(label: "Cancel", image: "cancel"  )
+        self.settings = [   Setting(label: .settings, image: "settings"  ),
+                            Setting(label: .feedback, image: "feedback"  ),
+                            Setting(label: .help, image: "help"  ),
+                            Setting(label: .switch_accout, image: "switch_account"  ),
+                            Setting(label: .cancel, image: "cancel"  )
         ]
         super.init()
         
