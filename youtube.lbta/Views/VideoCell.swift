@@ -27,7 +27,9 @@ class VideoCell: BaseCell {
     var video: Video? {
         didSet {
             titleLabel.text = video?.title
-            thumbnailImageView.image = UIImage(named: (video?.thumbnailImageName)!)
+            
+            setupThumbnailImage()
+            setupProfileImage()
             
             if let profileImageName = video?.channel?.profileImageName {
                 userProfileView.image = UIImage(named: profileImageName)
@@ -46,7 +48,7 @@ class VideoCell: BaseCell {
                 let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
                 let estimatedRect = NSString(string: title).boundingRect(with:size, options: options, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)], context: nil)
                 
-                if estimatedRect.size.height > 20 {
+                if estimatedRect.size.height > 18 {
                     titleLabelHeightConstraint?.constant = 44
                 } else {
                     titleLabelHeightConstraint?.constant = 20
@@ -75,6 +77,7 @@ class VideoCell: BaseCell {
         view.image = UIImage(named: "taylor_swift_profile")
         view.layer.cornerRadius = 22
         view.layer.masksToBounds = true
+        view.contentMode = .scaleAspectFill
         return view
     } ()
     
@@ -96,6 +99,18 @@ class VideoCell: BaseCell {
     } ()
     
     var titleLabelHeightConstraint:NSLayoutConstraint?
+    
+    func setupThumbnailImage() {
+         if let imageURL = video?.thumbnailImageName {
+            thumbnailImageView.loadImage(url: imageURL)
+        }
+    }
+    
+    func setupProfileImage() {
+        if let imageURL = video?.channel?.profileImageName {
+            userProfileView.loadImage(url: imageURL)
+        }
+    }
     
     override func setupViews() {
         super.setupViews()
