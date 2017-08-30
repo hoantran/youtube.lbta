@@ -118,8 +118,10 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         print("hi")
     }
     
+    let settingLauncher = SettingLauncher()
+    
     @objc func handleMore() {
-        print(123)
+        settingLauncher.showSettings()
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
