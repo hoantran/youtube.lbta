@@ -11,31 +11,9 @@ import UIKit
 class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
     
     var videos: [Video]?
-//    var videos: [Video] = {
-//        var kanyeChannel = Channel()
-//        kanyeChannel.name = "KanyeLaBestChannel"
-//        kanyeChannel.profileImageName = "kanye_profile"
-//
-//        var blankSpace = Video()
-//        blankSpace.title = "Taylor Swift - Blank Space"
-//        blankSpace.thumbnailImageName = "taylor_swift_blank_space"
-//        blankSpace.channel = kanyeChannel
-//        blankSpace.numberOfViews = 343433353532
-//
-//        var badBlood = Video()
-//        badBlood.title = "Taylor Swift - Bad Bload Feat. Kanye West"
-//        badBlood.thumbnailImageName = "taylor_swift_bad_blood"
-//        badBlood.channel = kanyeChannel
-//        badBlood.numberOfViews = 3433535323322
-//
-//        return [blankSpace, badBlood]
-//    }()
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        navigationItem.title = "Home"
         
         let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.width-32, height: view.frame.height))
         titleLabel.text = "Home"
@@ -63,44 +41,29 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }()
     
     func fetchVideos() {
-        let url = URL(string: "https://s3-us-west-2.amazonaws.com/youtubeassets/home.json")!
-        let config = URLSessionConfiguration.default // Session Configuration
-        let session = URLSession(configuration: config) // Load configuration into Session
         
-        let task = session.dataTask(with: url, completionHandler: { (data, response, error) in
-            if error == nil {
-                do {
-                    if let data = data {
-                        let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-//                        print(json)
-                        self.videos = [Video]()
-                        
-                        for dictionary in json as! [[String: Any]] {
-                            if let video = Video(dictionary: dictionary) {
-                                self.videos?.append(video)
-                            }
-                        }
-                    }
-                    
-                    DispatchQueue.main.async {
-                        self.collectionView?.reloadData()
-                    }
-                    
-                } catch let jsonError {
-                    print("error in JSONSerialization: \(jsonError)")
-                }
-            } else {
-                print(error!.localizedDescription)
-                return
-            }
-        })
-        task.resume()
+            ApiService.sharedInstance.fetchVideos(completion: {(videos: [Video]) in
+                self.videos = videos
+                self.collectionView?.reloadData()
+            })
+        
     }
     
     private func setupMenuBar() {
+        navigationController?.hidesBarsOnSwipe = true
+        
+        // hide the sliding collection view cells underneath
+        let redView = UIView()
+        redView.backgroundColor = UIColor.rgb(red: 230, green: 32, blue: 31)
+        view.addSubview(redView)
+        view.addConstraints(format: "H:|[v0]|", views: redView)
+        view.addConstraints(format: "V:[v0(50)]", views: redView)
+        
         view.addSubview(menuBar)
         view.addConstraints(format: "H:|[v0]|", views: menuBar)
-        view.addConstraints(format: "V:|[v0(50)]", views: menuBar)
+        
+        view.addConstraints(format: "V:[v0(50)]", views: menuBar) // make sure there's no vertical bar at the top, otherwise the menubar will go into the status area
+        menuBar.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor).isActive = true // helps stops menu bar from going underneath the status area ontop of screen
     }
     
     private func setupNavButtons() {

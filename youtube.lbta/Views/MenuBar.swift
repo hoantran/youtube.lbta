@@ -31,6 +31,9 @@ class MenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UIC
         
         cell.imageView.image = (UIImage(named: imageNames[indexPath.item]))?.withRenderingMode(.alwaysTemplate)
         cell.tintColor = UIColor.rgb(red: 91, green: 14, blue: 13)
+        
+        cell.index = indexPath.item
+        
         return cell
     }
     
@@ -53,14 +56,41 @@ class MenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UIC
         
         let selectedPath = IndexPath(item: 0, section: 0)
         collectionView.selectItem(at: selectedPath, animated: false, scrollPosition: .right)
+        
+        setupHorizontalBar()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    var horizontalBarLeftAnchorConstraint: NSLayoutConstraint?
+    
+    func setupHorizontalBar() {
+        let horizontalBarView = UIView()
+        horizontalBarView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        horizontalBarView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(horizontalBarView)
+        
+        horizontalBarLeftAnchorConstraint = horizontalBarView.leftAnchor.constraint(equalTo: self.leftAnchor)
+        horizontalBarLeftAnchorConstraint?.isActive = true
+        horizontalBarView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        horizontalBarView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/4).isActive = true
+        horizontalBarView.heightAnchor.constraint(equalToConstant: 4).isActive = true
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let x = CGFloat(indexPath.item) * frame.width / 4
+        horizontalBarLeftAnchorConstraint?.constant = x
+        
+        UIView.animate(withDuration: 0.55, delay: 0, usingSpringWithDamping: 10, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
+            self.layoutIfNeeded()
+        }, completion: nil)
+    }
 }
 
 class MenuCell: BaseCell {
+    var index: Int?  // just for tracking; functionally useless
     
     let imageView : UIImageView = {
         let view = UIImageView()
@@ -70,12 +100,18 @@ class MenuCell: BaseCell {
     
     override var isHighlighted: Bool {
         didSet {
+            if let index = self.index {
+                print("highligted:", self.isHighlighted, ":", index)
+            }
             imageView.tintColor =  isHighlighted ? UIColor.white : UIColor.rgb(red: 91, green: 14, blue: 13)
         }
     }
     
     override var isSelected: Bool {
         didSet {
+            if let index = self.index {
+                print("isSelected:", self.isSelected, ":", index)
+            }
             imageView.tintColor =  isSelected ? UIColor.white : UIColor.rgb(red: 91, green: 14, blue: 13)
         }
     }
