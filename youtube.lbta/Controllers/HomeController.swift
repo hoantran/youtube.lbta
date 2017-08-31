@@ -8,10 +8,14 @@
 
 import UIKit
 
+enum FeedCellID: String {
+    case home
+    case trending
+    case subscriptions
+    case account
+}
+
 class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-    
-    let cellID = "cellID"
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,7 +47,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     private func setupCollectionView() {
-        collectionView?.register(FeedCell.self, forCellWithReuseIdentifier: self.cellID)
+        collectionView?.register(FeedCell.self, forCellWithReuseIdentifier: FeedCellID.home.rawValue)
+        collectionView?.register(TrendingCell.self, forCellWithReuseIdentifier: FeedCellID.trending.rawValue)
+        collectionView?.register(SubscriptionsCell.self, forCellWithReuseIdentifier: FeedCellID.subscriptions.rawValue)
         // push the content and scroll bar out from underneath the NavBar
         collectionView?.contentInset = UIEdgeInsetsMake(50, 0, 0, 0)
         collectionView?.scrollIndicatorInsets = UIEdgeInsetsMake(50, 0, 0, 0)
@@ -139,7 +145,16 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return collectionView.dequeueReusableCell(withReuseIdentifier: self.cellID, for: indexPath)
+        let identifier: String
+        switch indexPath.item {
+        case 1:
+            identifier = FeedCellID.trending.rawValue
+        case 2:
+            identifier = FeedCellID.subscriptions.rawValue
+        default:
+            identifier = FeedCellID.home.rawValue
+        }
+        return collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

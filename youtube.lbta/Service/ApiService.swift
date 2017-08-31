@@ -10,9 +10,10 @@ import Foundation
 
 class ApiService {
     static let sharedInstance = ApiService()
+    let baseURL = "https://s3-us-west-2.amazonaws.com/youtubeassets"
     
-    func fetchVideos(completion: @escaping ([Video])->() ) {
-        let url = URL(string: "https://s3-us-west-2.amazonaws.com/youtubeassets/home.json")!
+    func fetchVideos(file: String, completion: @escaping ([Video])->() ) {
+        let url = URL(string: "\(self.baseURL)/\(file)")!
         let config = URLSessionConfiguration.default // Session Configuration
         let session = URLSession(configuration: config) // Load configuration into Session
         

@@ -9,6 +9,9 @@
 import UIKit
 
 class FeedCell: BaseCell, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate {
+    var file: String {
+        return "home.json"
+    }
     
     var videos: [Video]?
     
@@ -23,7 +26,6 @@ class FeedCell: BaseCell, UICollectionViewDelegateFlowLayout, UICollectionViewDa
     
     override func setupViews() {
         super.setupViews()
-        
         fetchVideos()
         
         backgroundColor = UIColor.cyan
@@ -35,7 +37,7 @@ class FeedCell: BaseCell, UICollectionViewDelegateFlowLayout, UICollectionViewDa
     }
     
     func fetchVideos() {
-        ApiService.sharedInstance.fetchVideos(completion: {(videos: [Video]) in
+        ApiService.sharedInstance.fetchVideos(file: self.file, completion: {(videos: [Video]) in
             self.videos = videos
             self.collectionView.reloadData()
         })
