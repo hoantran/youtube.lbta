@@ -8,7 +8,24 @@
 
 import UIKit
 
+struct MenuBarItem {
+    let imageName: String
+    let title: String
+    
+    init(title: String, imageName: String) {
+        self.title = title
+        self.imageName = imageName
+    }
+}
+
 class MenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+ 
+    static let ITEMS: [MenuBarItem] = {
+        return [    MenuBarItem(title: "Home", imageName: "home"),
+                    MenuBarItem(title: "Trending", imageName: "trending"),
+                    MenuBarItem(title: "Subscriptions", imageName: "subscriptions"),
+                    MenuBarItem(title: "Account", imageName: "account") ]
+    } ()
     
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -19,7 +36,6 @@ class MenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UIC
         return view
     }()
     
-    let imageNames = ["home", "trending", "subscriptions", "account"]
     let cellID = "cellID"
     
     var homeController: HomeController?
@@ -31,7 +47,7 @@ class MenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UIC
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellID, for: indexPath) as! MenuCell
         
-        cell.imageView.image = (UIImage(named: imageNames[indexPath.item]))?.withRenderingMode(.alwaysTemplate)
+        cell.imageView.image = (UIImage(named: MenuBar.ITEMS[indexPath.item].imageName))?.withRenderingMode(.alwaysTemplate)
         cell.tintColor = UIColor.rgb(red: 91, green: 14, blue: 13)
         
         cell.index = indexPath.item
@@ -88,7 +104,6 @@ class MenuBar: UIView, UICollectionViewDataSource, UICollectionViewDelegate, UIC
 //        UIView.animate(withDuration: 0.55, delay: 0, usingSpringWithDamping: 10, initialSpringVelocity: 5, options: .curveEaseOut, animations: {
 //            self.layoutIfNeeded()
 //        }, completion: nil)
-        
         homeController?.scrollToMenuIndex(menuIndex: indexPath.item)
     }
 }
