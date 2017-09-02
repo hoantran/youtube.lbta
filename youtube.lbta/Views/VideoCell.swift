@@ -31,11 +31,7 @@ class VideoCell: BaseCell {
             setupThumbnailImage()
             setupProfileImage()
             
-            if let profileImageName = video?.channel?.profileImageName {
-                userProfileView.image = UIImage(named: profileImageName)
-            }
-            
-            if let channelName = video?.channel?.name, let numberOfViews = video?.numberOfViews {
+            if let channelName = video?.channel?.name, let numberOfViews = video?.number_of_views {
                 let numberFormatter = NumberFormatter()
                 numberFormatter.numberStyle = .decimal
                 let subtitleText = "\(channelName) - \(numberFormatter.string(from: numberOfViews) ?? "0")) - 2 years ago"
@@ -47,6 +43,7 @@ class VideoCell: BaseCell {
                 let size = CGSize(width: frame.width - 16 - 44 - 8 - 16, height: 1000)
                 let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
                 let estimatedRect = NSString(string: title).boundingRect(with:size, options: options, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)], context: nil)
+//                let estimatedRect = NSString(string: title).boundingRect(with:size, options: options, attributes: [NSFontAttributeName: UIFont.systemFont(ofSize: 16)], context: nil)
                 
                 if estimatedRect.size.height > 18 {
                     titleLabelHeightConstraint?.constant = 44
@@ -101,13 +98,13 @@ class VideoCell: BaseCell {
     var titleLabelHeightConstraint:NSLayoutConstraint?
     
     func setupThumbnailImage() {
-         if let imageURL = video?.thumbnailImageName {
+         if let imageURL = video?.thumbnail_image_name {
             thumbnailImageView.loadImage(urlStr: imageURL)
         }
     }
     
     func setupProfileImage() {
-        if let imageURL = video?.channel?.profileImageName {
+        if let imageURL = video?.channel?.profile_image_name {
             userProfileView.loadImage(urlStr: imageURL)
         }
     }

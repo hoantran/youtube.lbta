@@ -20,20 +20,11 @@ class ApiService {
         let task = session.dataTask(with: url, completionHandler: { (data, response, error) in
             if error == nil {
                 do {
-                    var videos = [Video]()
-                    if let data = data {
-                        let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-                        
-                        for dictionary in json as! [[String: Any]] {
-                            if let video = Video(dictionary: dictionary) {
-                                videos.append(video)
-                            }
+                    if let data = data, let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [[String: Any]] {
+                        DispatchQueue.main.async {
+                            completion(json.map({return Video($0)}))
                         }
                     }
-                    DispatchQueue.main.async {
-                        completion(videos)
-                    }
-                    
                 } catch let jsonError {
                     print("error in JSONSerialization: \(jsonError)")
                 }

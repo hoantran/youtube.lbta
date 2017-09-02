@@ -16,6 +16,7 @@ enum FeedCellID: String {
 }
 
 class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -96,7 +97,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
     
     @objc func handleSearch(){
-        scrollToMenuIndex(menuIndex: 2)
+        DispatchQueue.main.async {
+            self.collectionView?.reloadData()
+        }
     }
     
     func scrollToMenuIndex(menuIndex: Int) {
@@ -125,7 +128,8 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         controller.navigationItem.title = setting.label.rawValue
         
         navigationController?.navigationBar.tintColor = UIColor.white // back color
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white] // title text// NSAttributedString.foregroundColor.rawValue: UIColor.white] // title text
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white] // title text// NSAttributedString.foregroundColor.rawValue:
+//        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white] // title text// NSAttributedString.foregroundColor.rawValue:         UIColor.white] // title text
         navigationController?.pushViewController(controller, animated: true)
     }
     
