@@ -11,6 +11,7 @@ import Foundation
 class ApiService {
     static let sharedInstance = ApiService()
     let baseURL = "https://s3-us-west-2.amazonaws.com/youtubeassets"
+//    let baseURL = "http://localhost:8000"
     
     func fetchVideos(file: String, completion: @escaping ([Video])->() ) {
         let url = URL(string: "\(self.baseURL)/\(file)")!

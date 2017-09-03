@@ -63,4 +63,9 @@ class FeedCell: BaseCell, UICollectionViewDelegateFlowLayout, UICollectionViewDa
         return 0
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let player = VideoLauncher()
+        player.showVideoPlayer()
+    }
+    
 }
