@@ -11,21 +11,85 @@ import AVFoundation
 
 class VideoPlayerView: UIView {
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    let activityIndicatorView: UIActivityIndicatorView = {
+        let aiv = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        aiv.translatesAutoresizingMaskIntoConstraints = false
+        aiv.startAnimating()
+        return aiv
+    }()
+    
+    let controlsContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(white: 0, alpha: 1)
+        return view
+    }()
+    
+    var player: AVPlayer?
+    var isPlaying: Bool = false
+    var pauseButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.tintColor = UIColor.white
+        b.setImage(UIImage(named: "pause"  ), for: .normal)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        b.addTarget(self, action: #selector(handlePause), for: .touchUpInside)
+        b.isHidden = true
+        return b
+    }()
+    
+    @objc func handlePause() {
+        if self.isPlaying {
+            self.pauseButton.setImage(UIImage(named: "play"  ), for: .normal)
+            self.player?.pause()
+        } else {
+            self.pauseButton.setImage(UIImage(named: "pause" ), for: .normal)
+            self.player?.play()
+        }
         
-        backgroundColor = UIColor.black
-        
-        let urlString = "http://www.bluepego.com/depot/15.16.17.swords.cmp.clip.sd.mov"
+        self.isPlaying = !self.isPlaying
+    }
+    
+    fileprivate func setupVideoPlayer() {
+//        let urlString = "http://www.bluepego.com/depot/15.16.17.swords.cmp.clip.sd.mov"
+        let urlString = "http://www.bluepego.com/depot/DSC_3898.MOV"
         if let url = URL(string: urlString) {
-            let player = AVPlayer(url: url)
+            player = AVPlayer(url: url)
             
             let playerLayer = AVPlayerLayer(player: player)
             playerLayer.frame = self.frame
             self.layer.addSublayer(playerLayer)
             
-            player.play()
+            player?.addObserver(self, forKeyPath: "status", options: .new, context: nil)
+            player?.play()
         }
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "status" {
+            activityIndicatorView.stopAnimating()
+            controlsContainerView.backgroundColor = UIColor.clear
+            self.isPlaying = true
+            self.pauseButton.isHidden = false
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        backgroundColor = UIColor.black
+        setupVideoPlayer()
+        
+        controlsContainerView.frame = frame
+        addSubview(controlsContainerView)
+        
+        controlsContainerView.addSubview(activityIndicatorView)
+        activityIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        activityIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+
+        controlsContainerView.addSubview(self.pauseButton)
+        pauseButton.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        pauseButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        pauseButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        pauseButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
