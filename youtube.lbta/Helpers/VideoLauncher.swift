@@ -40,8 +40,18 @@ class VideoPlayerView: UIView {
         let label = UILabel()
         label.text = "00:00"
         label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.font = UIFont.boldSystemFont(ofSize: 13)
         label.textAlignment = .right
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let videoProgressLabel: UILabel = {
+        let label = UILabel()
+        label.text = "00:00"
+        label.textColor = UIColor.white
+        label.textAlignment = .left
+        label.font = UIFont.boldSystemFont(ofSize: 13)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -94,6 +104,21 @@ class VideoPlayerView: UIView {
             player?.addObserver(self, forKeyPath: "currentItem.loadedTimeRanges", options: .new, context: nil)
             player?.addObserver(self, forKeyPath: "status", options: .new, context: nil)
             player?.play()
+            
+            let interval = CMTime(seconds: 1, preferredTimescale: 2)
+            player?.addPeriodicTimeObserver(forInterval: interval, queue: DispatchQueue.main, using: { (progressTime) in
+                
+                let seconds = CMTimeGetSeconds(progressTime)
+                let secondsText = String(format: "%02d", Int(seconds) % 60)
+                let minutesText = String(format: "%02d", Int(seconds / 60))
+                
+                self.videoProgressLabel.text = "\(minutesText):\(secondsText)"
+                
+                if let duration = self.player?.currentItem?.duration {
+                    let durationSeconds = CMTimeGetSeconds(duration)
+                    self.videoSlider.value = Float(seconds/durationSeconds)
+                }
+            })
         }
     }
     
@@ -123,6 +148,8 @@ class VideoPlayerView: UIView {
         controlsContainerView.frame = frame
         addSubview(controlsContainerView)
         
+        setupGradientLayer()
+        
         controlsContainerView.addSubview(activityIndicatorView)
         activityIndicatorView.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         activityIndicatorView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
@@ -135,15 +162,29 @@ class VideoPlayerView: UIView {
         
         controlsContainerView.addSubview(videoLengthLabel)
         videoLengthLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -8).isActive = true
-        videoLengthLabel.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        videoLengthLabel.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        videoLengthLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -2).isActive = true
+        videoLengthLabel.widthAnchor.constraint(equalToConstant: 50).isActive = true
         videoLengthLabel.heightAnchor.constraint(equalToConstant: 24).isActive = true
         
+        controlsContainerView.addSubview(videoProgressLabel)
+        videoProgressLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 8).isActive = true
+        videoProgressLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -2).isActive = true
+        videoProgressLabel.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        videoProgressLabel.heightAnchor.constraint(equalToConstant: 24).isActive = true
+
         controlsContainerView.addSubview(videoSlider)
         videoSlider.rightAnchor.constraint(equalTo: videoLengthLabel.leftAnchor).isActive = true
         videoSlider.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        videoSlider.leftAnchor.constraint(equalTo: leftAnchor).isActive = true
+        videoSlider.leftAnchor.constraint(equalTo: videoProgressLabel.rightAnchor).isActive = true
         videoSlider.heightAnchor.constraint(equalToConstant: 30).isActive = true
+    }
+    
+    fileprivate func setupGradientLayer() {
+        let gradient = CAGradientLayer()
+        gradient.frame = bounds
+        gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor]
+        gradient.locations = [0.7, 1.2]
+        controlsContainerView.layer.addSublayer(gradient)
     }
     
     required init?(coder aDecoder: NSCoder) {
